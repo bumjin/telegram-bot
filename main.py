@@ -19,7 +19,7 @@ import logging
 import re
 
 # 봇 토큰, 봇 API 주소
-TOKEN = '159198158:AAEwAkORVwlJv4YbxqDmdgwyJ4dvkRAlBXo'
+TOKEN = 'YOUR_BOT_TOKEN_HERE'
 BASE_URL = 'https://api.telegram.org/bot' + TOKEN + '/'
 
 # 봇이 응답할 명령어
@@ -27,7 +27,6 @@ CMD_START     = '/start'
 CMD_STOP      = '/stop'
 CMD_HELP      = '/help'
 CMD_BROADCAST = '/broadcast'
-CMD_BROADCAST_NEWS = '/broadcast-news'
 
 # 봇 사용법 & 메시지
 USAGE = u"""[사용법] 아래 명령어를 메시지로 보내거나 버튼을 누르시면 됩니다.
@@ -42,8 +41,6 @@ MSG_STOP  = u'봇을 정지합니다.'
 CUSTOM_KEYBOARD = [
         [CMD_START],
         [CMD_STOP],
-        #[CMD_BROADCAST],
-        [CMD_BROADCAST_NEWS],
         [CMD_HELP],
         ]
 
@@ -212,23 +209,15 @@ class WebhookHandler(webapp2.RequestHandler):
         self.response.write(json.dumps(body))
         process_cmds(body['message'])
 
-# /broadcast-foodtime 요청시
+# /food-alarm/lunch     (lunch|snack|dinner) 요청시
 class FoodHandler(webapp2.RequestHandler):
-    def post(self):
+    def get(self, foodtype):
         urlfetch.set_default_fetch_deadline(60)
-        broadcast(u'지금은 밥먹을 시간이지 말입니다.')
-    def get(self):
-        urlfetch.set_default_fetch_deadline(60)
-        broadcast(u'지금은 밥먹을 시간이지 말입니다.')
-        
-# /broadcast-snacktime 요청시        
-class SnackHandler(webapp2.RequestHandler):
-    def post(self):
-        urlfetch.set_default_fetch_deadline(60)
-        broadcast(u'지금은 간식먹을 시간이지 말입니다.')
-    def get(self):
-        urlfetch.set_default_fetch_deadline(60)
-        broadcast(u'지금은 간식먹을 시간이지 말입니다.')                
+        if(foodtype == 'lunch' or foodtype == 'dinner'): 
+            broadcast(u'지금은 밥먹을 시간이지 말입니다.')
+        elif (foodtype == 'snack'): 
+            broadcast(u'지금은 간식먹을 시간이지 말입니다.')
+            
 # 구글 앱 엔진에 웹 요청 핸들러 지정
 app = webapp2.WSGIApplication([
     ('/me', MeHandler),
@@ -236,6 +225,5 @@ app = webapp2.WSGIApplication([
     ('/set-webhook', SetWebhookHandler),
     ('/webhook', WebhookHandler),
     #('/broadcast', WebhookHandler),
-	('/broadcast-foodtime', FoodHandler),
-    ('/broadcast-snacktime', SnackHandler),
+	('/food-alarm/(.*)', FoodHandler),
 ], debug=True)

@@ -1,13 +1,13 @@
 cron:
 - description: broadcast lunch time 
-  url: /broadcast-food
+  url: /food-alarm/lunch
   schedule: every mon,tue,wed,thu,fri  11:50
   timezone: Asia/Seoul
 - description: broadcast snack time 
-  url: /broadcast-snacktime
+  url: /food-alarm/snack
   schedule: every mon,tue,wed,thu,fri  15:00
   timezone: Asia/Seoul
 - description: broadcast dinner time 
-  url: /broadcast-foodtime
+  url: /food-alarm/dinner
   schedule: every mon,tue,wed,thu,fri  17:50
   timezone: Asia/Seoul
