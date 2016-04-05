@@ -1,0 +1,13 @@
+cron:
+- description: broadcast lunch time 
+  url: /broadcast-food
+  schedule: every mon,tue,wed,thu,fri  11:50
+  timezone: Asia/Seoul
+- description: broadcast snack time 
+  url: /broadcast-snacktime
+  schedule: every mon,tue,wed,thu,fri  15:00
+  timezone: Asia/Seoul
+- description: broadcast dinner time 
+  url: /broadcast-foodtime
+  schedule: every mon,tue,wed,thu,fri  17:50
+  timezone: Asia/Seoul

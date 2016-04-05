@@ -27,6 +27,7 @@ CMD_START     = '/start'
 CMD_STOP      = '/stop'
 CMD_HELP      = '/help'
 CMD_BROADCAST = '/broadcast'
+CMD_BROADCAST_NEWS = '/broadcast-news'
 
 # 봇 사용법 & 메시지
 USAGE = u"""[사용법] 아래 명령어를 메시지로 보내거나 버튼을 누르시면 됩니다.
@@ -41,6 +42,8 @@ MSG_STOP  = u'봇을 정지합니다.'
 CUSTOM_KEYBOARD = [
         [CMD_START],
         [CMD_STOP],
+        #[CMD_BROADCAST],
+        [CMD_BROADCAST_NEWS],
         [CMD_HELP],
         ]
 
@@ -111,6 +114,7 @@ def broadcast(text):
     text:       (string)  메시지 내용
     """
     for chat in get_enabled_chats():
+        print chat.key.string_id()
         send_msg(chat.key.string_id(), text)
 
 # 봇 명령 처리 함수들
@@ -139,9 +143,9 @@ def cmd_broadcast(chat_id, text):
     chat_id: (integer) 채팅 ID
     text:    (string)  방송할 메시지
     """
-    send_msg(chat_id, u'메시지를 방송합니다.', keyboard=CUSTOM_KEYBOARD)
+    send_msg(chat_id, u'BraodCast메시지를 방송합니다.', keyboard=CUSTOM_KEYBOARD)
     broadcast(text)
-
+    
 def cmd_echo(chat_id, text, reply_to):
     u"""cmd_echo: 사용자의 메시지를 따라서 답장
     chat_id:  (integer) 채팅 ID
@@ -172,6 +176,7 @@ def process_cmds(msg):
         cmd_help(chat_id)
         return
     cmd_broadcast_match = re.match('^' + CMD_BROADCAST + ' (.*)', text)
+    print cmd_broadcast_match
     if cmd_broadcast_match:
         cmd_broadcast(chat_id, cmd_broadcast_match.group(1))
         return
@@ -207,10 +212,30 @@ class WebhookHandler(webapp2.RequestHandler):
         self.response.write(json.dumps(body))
         process_cmds(body['message'])
 
+# /broadcast-foodtime 요청시
+class FoodHandler(webapp2.RequestHandler):
+    def post(self):
+        urlfetch.set_default_fetch_deadline(60)
+        broadcast(u'지금은 밥먹을 시간이지 말입니다.')
+    def get(self):
+        urlfetch.set_default_fetch_deadline(60)
+        broadcast(u'지금은 밥먹을 시간이지 말입니다.')
+        
+# /broadcast-snacktime 요청시        
+class SnackHandler(webapp2.RequestHandler):
+    def post(self):
+        urlfetch.set_default_fetch_deadline(60)
+        broadcast(u'지금은 간식먹을 시간이지 말입니다.')
+    def get(self):
+        urlfetch.set_default_fetch_deadline(60)
+        broadcast(u'지금은 간식먹을 시간이지 말입니다.')                
 # 구글 앱 엔진에 웹 요청 핸들러 지정
 app = webapp2.WSGIApplication([
     ('/me', MeHandler),
     ('/updates', GetUpdatesHandler),
     ('/set-webhook', SetWebhookHandler),
     ('/webhook', WebhookHandler),
+    #('/broadcast', WebhookHandler),
+	('/broadcast-foodtime', FoodHandler),
+    ('/broadcast-snacktime', SnackHandler),
 ], debug=True)
